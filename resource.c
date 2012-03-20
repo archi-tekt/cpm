@@ -216,9 +216,8 @@ static DOTCONF_CB(cbStringArgument)
       { return _("string argument too long."); }
     else if (!strcmp(cmd -> name, "DatabaseFile"))
       {
-        memFreeString(__FILE__, __LINE__, config -> dbfilerc);
-        config -> dbfilerc = memAlloc(__FILE__, __LINE__,
-            strlen(cmd -> data.str) + 1);
+        memFreeString(config -> dbfilerc);
+        config -> dbfilerc = memAlloc(strlen(cmd -> data.str) + 1);
         strStrncpy(config -> dbfilerc, cmd -> data.str,
             strlen(cmd -> data.str) + 1);
       }
@@ -239,8 +238,7 @@ static DOTCONF_CB(cbStringArgument)
       {   /* define the alphabet of our created passwords */
         if (strlen(cmd -> data.str))
           {
-            config -> passwordalphabet = memAlloc(__FILE__, __LINE__,
-                strlen(cmd -> data.str) + 1);
+            config -> passwordalphabet = memAlloc(strlen(cmd -> data.str) + 1);
             strStrncpy(config -> passwordalphabet, cmd -> data.str,
                 strlen(cmd -> data.str) + 1);
           }

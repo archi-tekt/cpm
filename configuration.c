@@ -76,21 +76,21 @@ void freeConfiguration(void)
         config -> searchdata = listFree(config -> searchdata);
 
 #ifdef TEST_OPTION
-        memFreeString(__FILE__, __LINE__, config -> testrun);
+        memFreeString(config -> testrun);
 #endif
 
         if (config -> dbfilerc)
-          { memFreeString(__FILE__, __LINE__, config -> dbfilerc); }
+          { memFreeString(config -> dbfilerc); }
         if (config -> dbfilecmd)
-          { memFreeString(__FILE__, __LINE__, config -> dbfilecmd); }
+          { memFreeString(config -> dbfilecmd); }
         if (config -> rcfile)
-          { memFreeString(__FILE__, __LINE__, config -> rcfile); }
+          { memFreeString(config -> rcfile); }
         if (config -> encoding)
-          { memFreeString(__FILE__, __LINE__, config -> encoding); }
+          { memFreeString(config -> encoding); }
         if (config -> passwordalphabet)
-          { memFreeString(__FILE__, __LINE__, config -> passwordalphabet); }
+          { memFreeString(config -> passwordalphabet); }
 
-        memFree(__FILE__, __LINE__, config, sizeof(cpmconfig_t));
+        memFree(config, sizeof(cpmconfig_t));
         config = NULL;
       }
 
@@ -100,15 +100,15 @@ void freeConfiguration(void)
         runtime -> searchpatterns = listFree(runtime -> searchpatterns);
 
         clearPassphrase(1);
-        memFreeString(__FILE__, __LINE__, runtime -> realm);
-        memFreeString(__FILE__, __LINE__, runtime -> realmhint);
+        memFreeString(runtime -> realm);
+        memFreeString(runtime -> realmhint);
 
         if (runtime -> dbfile)
-          { memFreeString(__FILE__, __LINE__, runtime -> dbfile); }
+          { memFreeString(runtime -> dbfile); }
         if (runtime -> lockfile)
-          { memFreeString(__FILE__, __LINE__, runtime -> lockfile); }
+          { memFreeString(runtime -> lockfile); }
 
-        memFree(__FILE__, __LINE__, runtime, sizeof(cpmruntime_t));
+        memFree(runtime, sizeof(cpmruntime_t));
         config = NULL;
       }
   }
@@ -126,8 +126,8 @@ void initConfiguration(void)
   {
     TRACE(99, "initConfiguration()", NULL);
 
-    config = memAlloc(__FILE__, __LINE__, sizeof(cpmconfig_t));
-    runtime = memAlloc(__FILE__, __LINE__, sizeof(cpmruntime_t));
+    config = memAlloc(sizeof(cpmconfig_t));
+    runtime = memAlloc(sizeof(cpmruntime_t));
 
     config -> defaultkeys = NULL;
     config -> defaulttemplates = NULL;

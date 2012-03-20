@@ -117,10 +117,10 @@ int checkEnvValue(int showerror, int type, char* value)
     result = regcomp(&regex, pattern, REG_EXTENDED | REG_NOSUB);
     if (showerror && result)
       {
-        errormsg = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+        errormsg = memAlloc(STDBUFFERLENGTH);
         regerror(result, &regex, errormsg, STDBUFFERLENGTH);
         fprintf(stderr, "regerror: %s\n", errormsg);
-        memFree(__FILE__, __LINE__, errormsg, STDBUFFERLENGTH);
+        memFree(errormsg, STDBUFFERLENGTH);
 
         return 1;
       }
@@ -129,10 +129,10 @@ int checkEnvValue(int showerror, int type, char* value)
 
     if (showerror && result)
       {
-        errormsg = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+        errormsg = memAlloc(STDBUFFERLENGTH);
         regerror(result, &regex, errormsg, STDBUFFERLENGTH);
         fprintf(stderr, "regerror: %s\n", errormsg);
-        memFree(__FILE__, __LINE__, errormsg, STDBUFFERLENGTH);
+        memFree(errormsg, STDBUFFERLENGTH);
       }
 
     regfree(&regex);
@@ -320,16 +320,16 @@ int checkSecurity(int silent)
                     strerror(errno), \
                     errno \
                     ); \
-                memFreeString(__FILE__, __LINE__, ptr); \
+                memFreeString(ptr); \
                 return 1; \
               } \
           } \
         else \
           { \
-            memFreeString(__FILE__, __LINE__, ptr); \
+            memFreeString(ptr); \
             return 1; \
           } \
-        memFreeString(__FILE__, __LINE__, ptr); \
+        memFreeString(ptr); \
       }
 
 int clearEnvironment(void)
@@ -389,7 +389,7 @@ int clearEnvironment(void)
 
         if (ptr[i] == '=')
           {   /* we really found a variable */
-            eptr = memAlloc(__FILE__, __LINE__, i + 1);
+            eptr = memAlloc(i + 1);
             strStrncpy(eptr, ptr, i + 1);
 
             /* unset the variable */
@@ -403,7 +403,7 @@ int clearEnvironment(void)
                     );
               }
 
-            memFree(__FILE__, __LINE__, eptr, i + 1);
+            memFree(eptr, i + 1);
           }
       }
 #endif

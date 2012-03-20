@@ -53,16 +53,16 @@ char** listAdd(char** list, char*  element)
     entries = listCount(list);
     if (entries)
       {
-        list = memRealloc(__FILE__, __LINE__, list,
+        list = memRealloc(list,
             sizeof(char*) * (entries + 1),
             sizeof(char*) * (entries + 2));
       }
     else
       {
-        list = memAlloc(__FILE__, __LINE__, sizeof(char*) * 2);
+        list = memAlloc(sizeof(char*) * 2);
       }
 
-    list[entries] = memAlloc(__FILE__, __LINE__, strlen(element) + 1);
+    list[entries] = memAlloc(strlen(element) + 1);
     strStrncpy(list[entries], element, strlen(element) + 1);
     list[entries + 1] = NULL;
 
@@ -112,7 +112,7 @@ char** listDelete(char** list, int id)
       { return list; }
 
     /* we first free the useless string */
-    memFreeString(__FILE__, __LINE__, list[id]);
+    memFreeString(list[id]);
 
     /* we move all elements one id towards the beginning of the array;
      * since we know that we have 'entries + 1' elements allocated
@@ -122,12 +122,12 @@ char** listDelete(char** list, int id)
 
     if (entries == 1)
       {   /* this was our last element, we free the whole array */
-        memFree(__FILE__, __LINE__, list, sizeof(char*) * 2);
+        memFree(list, sizeof(char*) * 2);
         list = NULL;
       }
     else
       {   /* we reduce the size of the array */
-        list = memRealloc(__FILE__, __LINE__, list,
+        list = memRealloc(list,
             sizeof(char*) * (entries + 1),
             sizeof(char*) * (entries));
       }
@@ -152,11 +152,11 @@ char** listFree(char** list)
       {
         while (list[id])
           {
-            memFreeString(__FILE__, __LINE__, list[id]);
+            memFreeString(list[id]);
             id++;
           }
 
-        memFree(__FILE__, __LINE__, list, sizeof(char*) * (id + 1));
+        memFree(list, sizeof(char*) * (id + 1));
         list = NULL;
       }
 

@@ -84,7 +84,7 @@ void freeGPG(void)
 
     if (lastrealm)
       {
-        memFreeString(__FILE__, __LINE__, lastrealm);
+        memFreeString(lastrealm);
         lastrealm = NULL;
       }
   }
@@ -112,7 +112,7 @@ int gpgCheckSignResult(SHOWERROR_FN showerror_cb, gpgme_sign_result_t result,
 
     TRACE(99, "gpgCheckSignResult()", NULL);
 
-    buffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+    buffer = memAlloc(STDBUFFERLENGTH);
 
     if (!result)
       {
@@ -241,7 +241,7 @@ int gpgCheckSignResult(SHOWERROR_FN showerror_cb, gpgme_sign_result_t result,
     if (error)
       { showerror_cb(_("GpgMe error"), buffer); }
 
-    memFree(__FILE__, __LINE__, buffer, STDBUFFERLENGTH);
+    memFree(buffer, STDBUFFERLENGTH);
 
     return error;
   }
@@ -268,7 +268,7 @@ int gpgCheckVerifyResult(SHOWERROR_FN showerror_cb,
 
     TRACE(99, "gpgCheckVerifyResult()", NULL);
 
-    buffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+    buffer = memAlloc(STDBUFFERLENGTH);
 
     if (!result)
       {
@@ -354,7 +354,7 @@ int gpgCheckVerifyResult(SHOWERROR_FN showerror_cb,
     if (error)
       { showerror_cb(_("GpgMe error"), buffer); }
 
-    memFree(__FILE__, __LINE__, buffer, STDBUFFERLENGTH);
+    memFree(buffer, STDBUFFERLENGTH);
 
     return error;
   }
@@ -387,17 +387,17 @@ char* gpgData2Char(gpgme_data_t dh, int* newsize)
         gpgError(gpgme_err_code_from_errno(errno));
         return NULL;
       }
-    tmpbuffer = memAlloc(__FILE__, __LINE__, BUFFERSIZE + 1);
+    tmpbuffer = memAlloc(BUFFERSIZE + 1);
     while ((tmpsize = gpgme_data_read(dh, tmpbuffer, BUFFERSIZE)) > 0)
       {
-        newbuffer = memRealloc(__FILE__, __LINE__, newbuffer,
+        newbuffer = memRealloc(newbuffer,
             *newsize, *newsize + tmpsize);
 
         /* Flawfinder: ignore */
         memcpy(newbuffer + *newsize, tmpbuffer, tmpsize);
         *newsize += tmpsize;
       }
-    memFree(__FILE__, __LINE__, tmpbuffer, BUFFERSIZE + 1);
+    memFree(tmpbuffer, BUFFERSIZE + 1);
     if (tmpsize < 0)
       {
         gpgError(gpgme_err_code_from_errno(errno));
@@ -597,11 +597,11 @@ int gpgDecrypt(char* buffer, int size, char** newbuffer, int* newsize,
         decrypt_result &&
         decrypt_result -> unsupported_algorithm)
       {
-        tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+        tmpbuffer = memAlloc(STDBUFFERLENGTH);
         snprintf(tmpbuffer, STDBUFFERLENGTH, _("unsupported algorithm: %s\n"),
             decrypt_result -> unsupported_algorithm);
         (showerror_cb)(_("GpgMe error"), tmpbuffer);
-        memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+        memFree(tmpbuffer, STDBUFFERLENGTH);
 
         showerror = 0;
         error = 1;
@@ -723,7 +723,7 @@ int gpgEncrypt(char* buffer, int size, char** newbuffer, int* newsize,
       {
         /* allocate the keys */
         keys = keyCount();
-        key = memAlloc(__FILE__, __LINE__, sizeof(gpgme_key_t) * (keys + 1));
+        key = memAlloc(sizeof(gpgme_key_t) * (keys + 1));
         key[keys] = NULL;
         signers = 0;
         for (i = 0; i < keys && !error; i++)
@@ -738,14 +738,14 @@ int gpgEncrypt(char* buffer, int size, char** newbuffer, int* newsize,
                     signers++;
                   }
 
-                memFreeString(__FILE__, __LINE__, fpr);
+                memFreeString(fpr);
               }
 
             fpr = gpgGetFingerprint(keyGet(i), LIST_ALL);
             if (fpr)
               {
                 error = gpgme_get_key(context, fpr, &key[i], LIST_ALL);
-                memFreeString(__FILE__, __LINE__, fpr);
+                memFreeString(fpr);
               }
           }
       }
@@ -771,12 +771,12 @@ int gpgEncrypt(char* buffer, int size, char** newbuffer, int* newsize,
     if (!error &&
         result -> invalid_recipients)
       {
-        tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+        tmpbuffer = memAlloc(STDBUFFERLENGTH);
         snprintf(tmpbuffer, STDBUFFERLENGTH,
             _("Invalid recipient encountered: %s"),
             result -> invalid_recipients -> fpr);
         (showerror_cb)(_("GpgMe error"), tmpbuffer);
-        memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+        memFree(tmpbuffer, STDBUFFERLENGTH);
 
         showerror = 0;
         error = 1;
@@ -797,7 +797,7 @@ int gpgEncrypt(char* buffer, int size, char** newbuffer, int* newsize,
     i = 0;
     while (key && keys && key[i])
       { gpgme_key_unref(key[i++]); }
-    memFree(__FILE__, __LINE__, key, sizeof(gpgme_key_t) * (keys + 1));
+    memFree(key, sizeof(gpgme_key_t) * (keys + 1));
 
     gpgme_data_release(input);
     gpgme_data_release(output);
@@ -866,8 +866,7 @@ char* gpgGetFingerprint(char* keyname, int secret_only)
             !key -> invalid &&
             !key -> revoked)
           {   /* we just use keys we can encrypt for */
-            identifier = memAlloc(__FILE__, __LINE__,
-                strlen(key -> subkeys -> fpr) + 1);
+            identifier = memAlloc(strlen(key -> subkeys -> fpr) + 1);
             strStrncpy(identifier, key -> subkeys -> fpr,
                 strlen(key -> subkeys -> fpr) + 1);
           }
@@ -930,7 +929,7 @@ char* gpgGetRealm(const char* desc)
     while (p[0] && p[0] != '\n')
       { p++; size++; }
 
-    realm = memAlloc(__FILE__, __LINE__, size + 1);
+    realm = memAlloc(size + 1);
     realm[size] = 0;
     strncpy(realm, start, size);
 
@@ -970,15 +969,15 @@ int gpgGetRecipients(gpgme_recipient_t recipients,
           {   /* add the key to the global list of keys */
             config -> defaultkeys = listAdd(config -> defaultkeys,
                 keyname);
-            memFreeString(__FILE__, __LINE__, keyname);
+            memFreeString(keyname);
           }
         else
           {   /* report an error, the key can not be found */
-            tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+            tmpbuffer = memAlloc(STDBUFFERLENGTH);
             snprintf(tmpbuffer, STDBUFFERLENGTH,
                 _("unknown recipient id %s"), recipient -> keyid);
             (showerror_cb)(_("GpgMe error"), tmpbuffer);
-            memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+            memFree(tmpbuffer, STDBUFFERLENGTH);
           }
 
         recipient = recipient -> next;
@@ -1024,7 +1023,7 @@ gpgme_error_t gpgRequestPassphrase(void *hook, const char *uid_hint,
       }
 
     if (runtime -> realm)
-      { memFreeString(__FILE__, __LINE__, runtime -> realm); }
+      { memFreeString(runtime -> realm); }
     runtime -> realm = gpgGetRealm(uid_hint);
 
     if (lastrealm && strcmp(lastrealm, runtime -> realm))
@@ -1036,14 +1035,14 @@ gpgme_error_t gpgRequestPassphrase(void *hook, const char *uid_hint,
       }
 
     if (lastrealm)
-      { memFreeString(__FILE__, __LINE__, lastrealm); }
-    lastrealm = memAlloc(__FILE__, __LINE__, strlen(runtime -> realm) + 1);
+      { memFreeString(lastrealm); }
+    lastrealm = memAlloc(strlen(runtime -> realm) + 1);
     strStrncpy(lastrealm, runtime -> realm, strlen(runtime -> realm) + 1);
 
     /* we keep the hint for the key addition */
     if (runtime -> realmhint)
-      { memFreeString(__FILE__, __LINE__, runtime -> realmhint); }
-    runtime -> realmhint = memAlloc(__FILE__, __LINE__, strlen(uid_hint) + 1);
+      { memFreeString(runtime -> realmhint); }
+    runtime -> realmhint = memAlloc(strlen(uid_hint) + 1);
     strStrncpy(runtime -> realmhint, uid_hint, strlen(uid_hint) + 1);
 
 #ifdef TEST_OPTION
@@ -1057,12 +1056,12 @@ gpgme_error_t gpgRequestPassphrase(void *hook, const char *uid_hint,
     (passphrase_callback)(++retries, runtime -> realm);
 #endif
 
-    ptr = memAlloc(__FILE__, __LINE__, strlen(runtime -> passphrase) + 2);
+    ptr = memAlloc(strlen(runtime -> passphrase) + 2);
     snprintf(ptr, strlen(runtime -> passphrase) + 2, "%s\n",
         runtime -> passphrase);
     len = strlen(ptr);
     wsize = write(fd, ptr, len);
-    memFreeString(__FILE__, __LINE__, ptr);
+    memFreeString(ptr);
 
     if (wsize == len)
       { return GPG_ERR_NO_ERROR; }
@@ -1222,7 +1221,7 @@ char* gpgValidateEncryptionKey(char* keyname)
                         strlen(tname) + 1 +
                         strlen(tcomment) + 2 + 1 +
                         strlen(key -> uids -> email) + 2 + 1;
-                    identifier = memAlloc(__FILE__, __LINE__, size);
+                    identifier = memAlloc(size);
                     snprintf(identifier, size, "%s %s (%s) <%s>",
                         key -> subkeys -> keyid,
                         tname,
@@ -1234,7 +1233,7 @@ char* gpgValidateEncryptionKey(char* keyname)
                     size = strlen(key -> subkeys -> keyid) + 1 +
                         strlen(tname) + 1 +
                         strlen(key -> uids -> email) + 2 + 1;
-                    identifier = memAlloc(__FILE__, __LINE__, size);
+                    identifier = memAlloc(size);
                     snprintf(identifier, size, "%s %s <%s>",
                         key -> subkeys -> keyid,
                         tname,

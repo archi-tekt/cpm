@@ -79,7 +79,7 @@ void testCompress(void)
     else
       { return; }
 
-    buffer = memAlloc(__FILE__, __LINE__, size);
+    buffer = memAlloc(size);
 
     /* we fill our test buffer */
     p_size = strlen(testpattern);
@@ -107,9 +107,9 @@ void testCompress(void)
     else
       { fprintf(stderr, "buffer error\n"); }
 
-    memFree(__FILE__, __LINE__, c_buffer, c_size);
-    memFree(__FILE__, __LINE__, u_buffer, u_size);
-    memFree(__FILE__, __LINE__, buffer, size);
+    memFree(c_buffer, c_size);
+    memFree(u_buffer, u_size);
+    memFree(buffer, size);
   }
 #endif
 
@@ -138,7 +138,7 @@ int zlibCompress(char* srcbuffer, int srclen, char** dstbuffer, int* dstlen,
     *errormsg = NULL;
 
     /* we use this buffer for the compression */
-    zbuffer = memAlloc(__FILE__, __LINE__, srclen + extrasize);
+    zbuffer = memAlloc(srclen + extrasize);
 
     zh.zalloc = (alloc_func)0;
     zh.zfree  = (free_func)0;
@@ -149,7 +149,7 @@ int zlibCompress(char* srcbuffer, int srclen, char** dstbuffer, int* dstlen,
     if (error != Z_OK)
       {
         *errormsg = zh.msg;
-        memFree(__FILE__, __LINE__, zbuffer, srclen + extrasize);
+        memFree(zbuffer, srclen + extrasize);
         return 1;
       }
 
@@ -162,7 +162,7 @@ int zlibCompress(char* srcbuffer, int srclen, char** dstbuffer, int* dstlen,
       {
         if (extrasize > srclen)
           {   /* we increase the ouput buffer until it matches */
-            zbuffer = memRealloc(__FILE__, __LINE__, zbuffer,
+            zbuffer = memRealloc(zbuffer,
                 srclen + extrasize - BUFFERSIZE, srclen + extrasize);
           }
         error = deflate(&zh, Z_FINISH);
@@ -176,17 +176,17 @@ int zlibCompress(char* srcbuffer, int srclen, char** dstbuffer, int* dstlen,
     if (error != Z_STREAM_END)
       {   /* Z_STREAM_END means everything is ok */
         *errormsg = zh.msg;
-        memFree(__FILE__, __LINE__, zbuffer, srclen + extrasize);
+        memFree(zbuffer, srclen + extrasize);
         return 1;
       }
 
     /* we get the data back to the caller */
     *dstlen = zh.total_out;
-    *dstbuffer = memAlloc(__FILE__, __LINE__, zh.total_out);
+    *dstbuffer = memAlloc(zh.total_out);
     /* Flawfinder: ignore */
     memcpy(*dstbuffer, zbuffer, zh.total_out);
 
-    memFree(__FILE__, __LINE__, zbuffer, srclen + extrasize);
+    memFree(zbuffer, srclen + extrasize);
 
     error = deflateEnd(&zh);
     if (error != Z_OK)
@@ -237,7 +237,7 @@ int zlibDecompress(char* srcbuffer, int srclen, char** dstbuffer, int* dstlen,
         return 1;
       }
 
-    zbuffer = memAlloc(__FILE__, __LINE__, BUFFERSIZE);
+    zbuffer = memAlloc(BUFFERSIZE);
 
     while (1)
       {
@@ -251,12 +251,12 @@ int zlibDecompress(char* srcbuffer, int srclen, char** dstbuffer, int* dstlen,
           {
             if (*dstbuffer)
               {   /* we must resize the buffer */
-                *dstbuffer = memRealloc(__FILE__, __LINE__, *dstbuffer,
+                *dstbuffer = memRealloc(*dstbuffer,
                     offset, zh.total_out);
               }
             else
               {   /* we need a new buffer */
-                *dstbuffer = memAlloc(__FILE__, __LINE__, zh.total_out);
+                *dstbuffer = memAlloc(zh.total_out);
               }
 
             /* Flawfinder: ignore */
@@ -270,14 +270,14 @@ int zlibDecompress(char* srcbuffer, int srclen, char** dstbuffer, int* dstlen,
         if (error != Z_OK)
           {
             *errormsg = zh.msg;
-            memFree(__FILE__, __LINE__, zbuffer, BUFFERSIZE);
+            memFree(zbuffer, BUFFERSIZE);
             return 1;
           }
       }
 
     *dstlen = offset;
 
-    memFree(__FILE__, __LINE__, zbuffer, BUFFERSIZE);
+    memFree(zbuffer, BUFFERSIZE);
 
     error = inflateEnd(&zh);
     if (error != Z_OK)

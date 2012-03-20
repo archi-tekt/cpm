@@ -102,7 +102,7 @@ int keyAdd(char* key)
           }
 
         /* we must free the identifier string */
-        memFreeString(__FILE__, __LINE__, identifier);
+        memFreeString(identifier);
 
         return 1;
       }
@@ -143,11 +143,11 @@ int keyChange(int id, char* key)
       {
         if (keyGetId(identifier) == -1)
           {   /* the key already exists, so we ignore it */
-            memFreeString(__FILE__, __LINE__, identifier);
+            memFreeString(identifier);
           }
         else
           {   /* we don't know this key */
-            memFreeString(__FILE__, __LINE__, encrypttionkeylist[id]);
+            memFreeString(encrypttionkeylist[id]);
             encrypttionkeylist[id] = identifier;
             listSort(encrypttionkeylist);
           }

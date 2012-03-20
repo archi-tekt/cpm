@@ -85,8 +85,8 @@ void freePatternparser(void)
               {
                 next = cur -> next;
                 if (cur -> type == PATTERN_STRING)
-                  { memFreeString(__FILE__, __LINE__, cur -> string); }
-                memFree(__FILE__, __LINE__, cur, sizeof(SEARCHPATTERN));
+                  { memFreeString(cur -> string); }
+                memFree(cur, sizeof(SEARCHPATTERN));
                 cur = next;
               }
 
@@ -95,16 +95,14 @@ void freePatternparser(void)
               {
                 next = cur -> next;
                 if (cur -> type == PATTERN_STRING)
-                  { memFreeString(__FILE__, __LINE__, cur -> string); }
-                memFree(__FILE__, __LINE__, cur, sizeof(SEARCHPATTERN));
+                  { memFreeString(cur -> string); }
+                memFree(cur, sizeof(SEARCHPATTERN));
                 cur = next;
               }
           }
 
-        memFree(__FILE__, __LINE__,
-            patterndata, sizeof(SEARCHPATTERN*) * patterncount);
-        memFree(__FILE__, __LINE__,
-            resultdata, sizeof(SEARCHPATTERN*) * patterncount);
+        memFree(patterndata, sizeof(SEARCHPATTERN*) * patterncount);
+        memFree(resultdata, sizeof(SEARCHPATTERN*) * patterncount);
       }
   }
 
@@ -188,14 +186,12 @@ int getPatternString(SEARCHPATTERN* pattern, char** path, char** string)
           {   /* we have a string to concat to the result */
             if (!*string)
               {   /* new string */
-                *string = memAlloc(__FILE__, __LINE__, strlen(concat) + 1);
+                *string = memAlloc(strlen(concat) + 1);
                 *string[0] = 0;
               }
             else
               {   /* resize the string */
-                *string = memRealloc(__FILE__, __LINE__,
-                    *string,
-                    strlen(*string) + 1,
+                *string = memRealloc(*string, strlen(*string) + 1,
                     strlen(*string) + strlen(concat) + 1);
               }
 
@@ -252,7 +248,7 @@ int patternCreate(char* patternstring, SEARCHPATTERN* pattern)
     if (!patternstring)
         return 1;
 
-    cbuffer = memAlloc(__FILE__, __LINE__, PATTERNLENGTH);
+    cbuffer = memAlloc(PATTERNLENGTH);
 
     ptr = patternstring;
     while (*ptr && size < PATTERNLENGTH && !error)
@@ -284,7 +280,7 @@ int patternCreate(char* patternstring, SEARCHPATTERN* pattern)
                               { cpattern = pattern; }
                             else
                               {
-                                cpattern -> next = memAlloc(__FILE__, __LINE__,
+                                cpattern -> next = memAlloc(
                                     sizeof(SEARCHPATTERN));
                                 cpattern = cpattern -> next;
                                 cpattern -> templateid = -1;
@@ -293,8 +289,7 @@ int patternCreate(char* patternstring, SEARCHPATTERN* pattern)
 
 
                             cpattern -> type = PATTERN_STRING;
-                            cpattern -> string = memAlloc(__FILE__, __LINE__,
-                                strlen(cbuffer) + 1);
+                            cpattern -> string = memAlloc(strlen(cbuffer) + 1);
                             strStrncpy(cpattern -> string, cbuffer,
                                 strlen(cbuffer) + 1);
                           }
@@ -321,7 +316,7 @@ int patternCreate(char* patternstring, SEARCHPATTERN* pattern)
                               { cpattern = pattern; }
                             else
                               {
-                                cpattern -> next = memAlloc(__FILE__, __LINE__,
+                                cpattern -> next = memAlloc(
                                     sizeof(SEARCHPATTERN));
                                 cpattern = cpattern -> next;
                                 cpattern -> string = NULL;
@@ -375,8 +370,7 @@ int patternCreate(char* patternstring, SEARCHPATTERN* pattern)
           { cpattern = pattern; }
         else
           {
-            cpattern -> next = memAlloc(__FILE__, __LINE__,
-                sizeof(SEARCHPATTERN));
+            cpattern -> next = memAlloc(sizeof(SEARCHPATTERN));
             cpattern = cpattern -> next;
             cpattern -> templateid = -1;
             cpattern -> next = NULL;
@@ -384,7 +378,7 @@ int patternCreate(char* patternstring, SEARCHPATTERN* pattern)
 
 
         cpattern -> type = PATTERN_STRING;
-        cpattern -> string = memAlloc(__FILE__, __LINE__, strlen(cbuffer) + 1);
+        cpattern -> string = memAlloc(strlen(cbuffer) + 1);
         strStrncpy(cpattern -> string, cbuffer, strlen(cbuffer) + 1);
       }
 
@@ -395,7 +389,7 @@ int patternCreate(char* patternstring, SEARCHPATTERN* pattern)
       }
 
     if (cbuffer)
-      { memFree(__FILE__, __LINE__, cbuffer, PATTERNLENGTH); }
+      { memFree(cbuffer, PATTERNLENGTH); }
 
     return error;
   }
@@ -454,15 +448,12 @@ int patternParse(void)
     TRACE(99, "patternParse()", NULL);
 
     patterncount = listCount(runtime -> searchpatterns);
-    patterndata = memAlloc(__FILE__, __LINE__,
-        sizeof(SEARCHPATTERN*) * patterncount);
-    resultdata = memAlloc(__FILE__, __LINE__,
-        sizeof(SEARCHPATTERN*) * patterncount);
+    patterndata = memAlloc(sizeof(SEARCHPATTERN*) * patterncount);
+    resultdata = memAlloc(sizeof(SEARCHPATTERN*) * patterncount);
 
     for (i = 0; i < patterncount; i++)
       {
-        patterndata[i] = memAlloc(__FILE__, __LINE__,
-            sizeof(SEARCHPATTERN));
+        patterndata[i] = memAlloc(sizeof(SEARCHPATTERN));
         patterndata[i] -> type = PATTERN_UNDEF;
         patterndata[i] -> templateid = -1;
         patterndata[i] -> string = NULL;
@@ -471,8 +462,7 @@ int patternParse(void)
         if (patternCreate(runtime -> searchpatterns[i], patterndata[i]))
           { error = 1; }
 
-        resultdata[i] = memAlloc(__FILE__, __LINE__,
-            sizeof(SEARCHPATTERN));
+        resultdata[i] = memAlloc(sizeof(SEARCHPATTERN));
         resultdata[i] -> type = PATTERN_UNDEF;
         resultdata[i] -> templateid = -1;
         resultdata[i] -> string = NULL;

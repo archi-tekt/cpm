@@ -106,8 +106,7 @@ int createBackupfile(char* filename, SHOWERROR_FN showerror_cb)
         return 0;
       }
 
-    newname = memAlloc(__FILE__, __LINE__,
-        strlen(filename) + 2);
+    newname = memAlloc(strlen(filename) + 2);
     strStrncpy(newname, filename, strlen(filename) + 1);
     strStrncat(newname, "~", 1 + 1);
     if (unlink(newname) &&
@@ -115,21 +114,21 @@ int createBackupfile(char* filename, SHOWERROR_FN showerror_cb)
       {   /* first we try to unlink any backup file; if it doesn't exist it's
            * not an error
            */
-        tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+        tmpbuffer = memAlloc(STDBUFFERLENGTH);
         snprintf(tmpbuffer, STDBUFFERLENGTH,
             _("error %d (%s) removing file '%s'."),
             errno,
             strerror(errno),
             newname);
         showerror_cb(_("file error"), tmpbuffer);
-        memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+        memFree(tmpbuffer, STDBUFFERLENGTH);
       }
 
     fd = fileLockOpen(filename, O_RDONLY, -1, &tmpbuffer);
     if (fd == -1)
       {
         if (tmpbuffer)
-          { memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH); }
+          { memFree(tmpbuffer, STDBUFFERLENGTH); }
       }
     else if (!fstat(fd, &filestat) &&
         filestat.st_size)
@@ -141,13 +140,13 @@ int createBackupfile(char* filename, SHOWERROR_FN showerror_cb)
         mode &= (S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP |
             S_IROTH | S_IWOTH | S_IXOTH);
 
-        buffer = memAlloc(__FILE__, __LINE__, size);
+        buffer = memAlloc(size);
 
         /* Flawfinder: ignore */
         if (read(fd, buffer, size) != size)
           {
-            memFree(__FILE__, __LINE__, buffer, size);
-            memFreeString(__FILE__, __LINE__, newname);
+            memFree(buffer, size);
+            memFreeString(newname);
             return 1;
           }
 
@@ -165,27 +164,27 @@ int createBackupfile(char* filename, SHOWERROR_FN showerror_cb)
         if (fd == -1)
           {
             showerror_cb(_("file error"), tmpbuffer);
-            memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+            memFree(tmpbuffer, STDBUFFERLENGTH);
 
-            memFree(__FILE__, __LINE__, buffer, size);
-            memFreeString(__FILE__, __LINE__, newname);
+            memFree(buffer, size);
+            memFreeString(newname);
 
             return 1;
           }
 
         if (write(fd, buffer, size) != size)
           {   /* error writing the file */
-            tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+            tmpbuffer = memAlloc(STDBUFFERLENGTH);
             snprintf(tmpbuffer, STDBUFFERLENGTH,
                 _("error %d (%s) writing file '%s'."),
                 errno,
                 strerror(errno),
                 newname);
             showerror_cb(_("file error"), tmpbuffer);
-            memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+            memFree(tmpbuffer, STDBUFFERLENGTH);
 
-            memFree(__FILE__, __LINE__, buffer, size);
-            memFreeString(__FILE__, __LINE__, newname);
+            memFree(buffer, size);
+            memFreeString(newname);
 
             lockf(fd, F_ULOCK, 0);
             close(fd);
@@ -196,8 +195,8 @@ int createBackupfile(char* filename, SHOWERROR_FN showerror_cb)
         close(fd);
       }
 
-    memFree(__FILE__, __LINE__, buffer, size);
-    memFreeString(__FILE__, __LINE__, newname);
+    memFree(buffer, size);
+    memFreeString(newname);
 
     return 0;
   }
@@ -238,7 +237,7 @@ char* createPassword(int length)
     TRACE(99, "createPassword()", NULL);
 
     if (dictionaryCheck()) {
-        dictionary = memAlloc(__FILE__, __LINE__, strlen(CRACKLIB_DICTPATH) + 1);
+        dictionary = memAlloc(strlen(CRACKLIB_DICTPATH) + 1);
         strStrncpy(dictionary, CRACKLIB_DICTPATH, strlen(CRACKLIB_DICTPATH) + 1);
     } else {
         dictionary = NULL;
@@ -250,14 +249,14 @@ char* createPassword(int length)
             errormsg = FascistCheck(password, dictionary);
 
         if (errormsg) {
-            memFreeString(__FILE__, __LINE__, password);
+            memFreeString(password);
             password = NULL;
         } else {
             break;
         }
     }
 
-    memFreeString(__FILE__, __LINE__, dictionary);
+    memFreeString(dictionary);
 
     return password;
 }
@@ -296,7 +295,7 @@ char* createRealPassword(int length)
       { return NULL; }
 
     alphalength = strlen(config -> passwordalphabet);
-    password = memAlloc(__FILE__, __LINE__, length + 1);
+    password = memAlloc(length + 1);
     for (i = 0; i < length; i++)
       {
         /* we get an unsigned int from /dev/random */
@@ -364,14 +363,14 @@ int fileLockCreate(char* filename, char* extension, char** errormsg)
 
     /* create the filename for the backup */
     size = strlen(filename) + 1 + strlen(extension) + 1;
-    fullname = memAlloc(__FILE__, __LINE__, size);
+    fullname = memAlloc(size);
     strStrncpy(fullname, filename, strlen(filename) + 1);
     strStrncat(fullname, ".", 1 + 1);
     strStrncat(fullname, extension, strlen(extension) + 1);
 
     /* in case the lockfile already was used, we must free it first */
     if (runtime -> lockfile)
-      { memFreeString(__FILE__, __LINE__, runtime -> lockfile); }
+      { memFreeString(runtime -> lockfile); }
 
     runtime -> lockfile = fullname;
 
@@ -446,7 +445,7 @@ int fileLockOpen(char* filename, int flags, mode_t mode, char** errormsg)
 
     if (fd == -1)
       {   /* error opening the file */
-        *errormsg = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+        *errormsg = memAlloc(STDBUFFERLENGTH);
         snprintf(*errormsg, STDBUFFERLENGTH,
             _("error %d (%s) opening file '%s'."),
             errno,
@@ -459,7 +458,7 @@ int fileLockOpen(char* filename, int flags, mode_t mode, char** errormsg)
     /* we always want to lock the whole file */
     if (lseek(fd, 0L, SEEK_SET) == -1)
       {
-        *errormsg = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+        *errormsg = memAlloc(STDBUFFERLENGTH);
         snprintf(*errormsg, STDBUFFERLENGTH,
             _("error %d (%s) seeking in file '%s'."),
             errno,
@@ -486,7 +485,7 @@ int fileLockOpen(char* filename, int flags, mode_t mode, char** errormsg)
                 continue;
               }
 
-            *errormsg = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+            *errormsg = memAlloc(STDBUFFERLENGTH);
             snprintf(*errormsg, STDBUFFERLENGTH,
                 _("could not exclusively open '%s'."),
                 filename);
@@ -495,7 +494,7 @@ int fileLockOpen(char* filename, int flags, mode_t mode, char** errormsg)
             return -1;
           }
 
-        *errormsg = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+        *errormsg = memAlloc(STDBUFFERLENGTH);
         snprintf(*errormsg, STDBUFFERLENGTH,
             _("error %d (%s) locking file '%s'."),
             errno,
@@ -559,11 +558,11 @@ char* isGoodPassword(char* password)
         return NULL;
     }
 
-    dictionary = memAlloc(__FILE__, __LINE__, strlen(CRACKLIB_DICTPATH) + 1);
+    dictionary = memAlloc(strlen(CRACKLIB_DICTPATH) + 1);
     strStrncpy(dictionary, CRACKLIB_DICTPATH, strlen(CRACKLIB_DICTPATH) + 1);
 
     result = (char*)FascistCheck(password, dictionary);
-    memFreeString(__FILE__, __LINE__, dictionary);
+    memFreeString(dictionary);
 
     return result;
 }
@@ -604,7 +603,7 @@ int isReadonly(char* filename)
 #endif
 
     ngroups_max = (int)sysconf(_SC_NGROUPS_MAX);
-    grouplist = memAlloc(__FILE__, __LINE__, sizeof(GETGROUPS_T) *
+    grouplist = memAlloc(sizeof(GETGROUPS_T) *
         (ngroups_max + 1));
     found = getgroups(ngroups_max, grouplist);
 
@@ -647,7 +646,7 @@ int isReadonly(char* filename)
       }
 
     /* free the groups */
-    memFree(__FILE__, __LINE__, grouplist, sizeof(GETGROUPS_T) *
+    memFree(grouplist, sizeof(GETGROUPS_T) *
         (ngroups_max + 1));
 
     return result;
@@ -671,7 +670,7 @@ char* resolveFilelink(char* filename)
 
     TRACE(99, "resolveFilelink()", NULL);
 
-    tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+    tmpbuffer = memAlloc(STDBUFFERLENGTH);
 
     /* Flawfinder: ignore */
     size = readlink(filename, tmpbuffer, STDBUFFERLENGTH);
@@ -682,16 +681,16 @@ char* resolveFilelink(char* filename)
            * filename
            */
         size = strlen(filename) + 1;
-        newfile = memAlloc(__FILE__, __LINE__, size);
+        newfile = memAlloc(size);
         strStrncpy(newfile, filename, size);
 
-        memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+        memFree(tmpbuffer, STDBUFFERLENGTH);
         return newfile;
       }
 
-    newfile = memAlloc(__FILE__, __LINE__, size + 1);
+    newfile = memAlloc(size + 1);
     strStrncpy(newfile, tmpbuffer, size + 1);
-    memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+    memFree(tmpbuffer, STDBUFFERLENGTH);
 
     return newfile;
   }

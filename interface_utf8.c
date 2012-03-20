@@ -63,13 +63,13 @@ char* convert(int direction, char* instring)
 
     if (convertbuffer)
       {
-        memFreeString(__FILE__, __LINE__, convertbuffer);
+        memFreeString(convertbuffer);
         convertbuffer = NULL;
       }
 
     insize = strlen((char*)instring) + 1;
     outsize = insize * 2 - 1;
-    convertbuffer = memAlloc(__FILE__, __LINE__, outsize);
+    convertbuffer = memAlloc(outsize);
 
     tmp = insize - 1;
     if (direction)
@@ -89,13 +89,12 @@ char* convert(int direction, char* instring)
         fprintf(stderr, _("conversion failed for string '%s' (%d).\n"),
             instring,
             ret);
-        memFree(__FILE__, __LINE__, convertbuffer, outsize);
+        memFree(convertbuffer, outsize);
         return NULL;
       }
     else
       {
-        convertbuffer = memRealloc(__FILE__, __LINE__,
-            convertbuffer, insize * 2 - 1, outsize + 1);
+        convertbuffer = memRealloc(convertbuffer, insize * 2 - 1, outsize + 1);
         convertbuffer[outsize] = 0;
       }
 
@@ -149,7 +148,7 @@ void freeUTF8Interface(void)
 
     if (convertbuffer)
       {
-        memFreeString(__FILE__, __LINE__, convertbuffer);
+        memFreeString(convertbuffer);
         convertbuffer = NULL;
       }
 
@@ -191,14 +190,14 @@ int initUTF8Encoding(char* encoding)
     tmp = convert(0, TSTRING);
     if (tmp)
       {   /* converting to UTF-8 was successful */
-        tstring1 = memAlloc(__FILE__, __LINE__, strlen(tmp) + 1);
+        tstring1 = memAlloc(strlen(tmp) + 1);
         strStrncpy(tstring1, tmp, strlen(tmp) + 1);
       }
 
     tmp = convert(1, tstring1);
     if (tmp)
       {   /* converting to terminal usage was successful */
-        tstring2 = memAlloc(__FILE__, __LINE__, strlen(tmp) + 1);
+        tstring2 = memAlloc(strlen(tmp) + 1);
         strStrncpy(tstring2, tmp, strlen(tmp) + 1);
       }
 
@@ -207,8 +206,8 @@ int initUTF8Encoding(char* encoding)
         !strcmp(TSTRING, tstring2))
       { status = 1; }
 
-    memFreeString(__FILE__, __LINE__, tstring1);
-    memFreeString(__FILE__, __LINE__, tstring2);
+    memFreeString(tstring1);
+    memFreeString(tstring2);
 
     return status;
   }

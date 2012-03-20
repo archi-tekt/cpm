@@ -139,8 +139,7 @@ int checkDtd(SHOWERROR_FN showerror_cb)
     xmlRemoveDtd();
 
     /* first we create the DTD as a whole */
-    dtdbuffer = memAlloc(__FILE__, __LINE__,
-        strlen(dtd_1) + strlen(dtd_2) + strlen(dtd_3) + 1);
+    dtdbuffer = memAlloc(strlen(dtd_1) + strlen(dtd_2) + strlen(dtd_3) + 1);
     if (!dtdbuffer)
       { return -1; }
 
@@ -151,7 +150,7 @@ int checkDtd(SHOWERROR_FN showerror_cb)
     /* create the xml buffer */
     inputbuffer = xmlParserInputBufferCreateMem(dtdbuffer, strlen(dtdbuffer),
         XML_CHAR_ENCODING_8859_1);
-    memFreeString(__FILE__, __LINE__, dtdbuffer);
+    memFreeString(dtdbuffer);
     if (!dtdbuffer)
       { return -1; }
 
@@ -255,7 +254,7 @@ int xmlDataFileRead(char* filename, char** errormsg,
     if (fd == -1)
       {   /* unable to read the file, we start a new one */
         showerror_cb(_("file error"), tmpbuffer);
-        memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+        memFree(tmpbuffer, STDBUFFERLENGTH);
 
         if (fileExists(filename))
           {   /* if the file exists and we can't read it it's a hard error and
@@ -288,11 +287,11 @@ int xmlDataFileRead(char* filename, char** errormsg,
         filestat.st_size)
       {   /* we found a file and have to read it */
         size = filestat.st_size;
-        buffer = memAlloc(__FILE__, __LINE__, size);
+        buffer = memAlloc(size);
         /* Flawfinder: ignore */
         if (read(fd, buffer, size) != size)
           {
-            memFree(__FILE__, __LINE__, buffer, size);
+            memFree(buffer, size);
             return 1;
           }
         close(fd);
@@ -305,7 +304,7 @@ int xmlDataFileRead(char* filename, char** errormsg,
               { *errormsg = _("could not decrypt database file."); }
 
             /* since we decrypted the file, we swap buffers */
-            memFree(__FILE__, __LINE__, buffer, size);
+            memFree(buffer, size);
             buffer = gpgbuffer;
             size = gpgsize;
 
@@ -344,19 +343,19 @@ int xmlDataFileRead(char* filename, char** errormsg,
                 errormsg);
             if (error)
               {
-                tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+                tmpbuffer = memAlloc(STDBUFFERLENGTH);
                 snprintf(tmpbuffer, STDBUFFERLENGTH,
                     _("error (%s) compressing file '%s'."),
                     *errormsg,
                     filename);
                 showerror_cb(_("compression error"), tmpbuffer);
-                memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+                memFree(tmpbuffer, STDBUFFERLENGTH);
 
-                memFree(__FILE__, __LINE__, buffer, size);
+                memFree(buffer, size);
                 return 1;
               }
 
-            memFree(__FILE__, __LINE__, buffer, size);
+            memFree(buffer, size);
             buffer = gpgbuffer;
             size = gpgsize;
           }
@@ -364,12 +363,12 @@ int xmlDataFileRead(char* filename, char** errormsg,
           {
             if (!error && config -> compression > 0)
               {
-                tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+                tmpbuffer = memAlloc(STDBUFFERLENGTH);
                 snprintf(tmpbuffer, STDBUFFERLENGTH,
                     _("database '%s' was not compressed."),
                     filename);
                 showerror_cb(_("warning"), tmpbuffer);
-                memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+                memFree(tmpbuffer, STDBUFFERLENGTH);
               }
           }
 
@@ -379,21 +378,21 @@ int xmlDataFileRead(char* filename, char** errormsg,
                 XML_PARSE_PEDANTIC | XML_PARSE_NONET | XML_PARSE_NOCDATA);
             if (!xmldoc)
               {
-                memFree(__FILE__, __LINE__, buffer, size);
+                memFree(buffer, size);
 
-                tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+                tmpbuffer = memAlloc(STDBUFFERLENGTH);
                 snprintf(tmpbuffer, STDBUFFERLENGTH,
                     _("failed to parse xml document '%s'."),
                     filename);
                 showerror_cb(_("file error"), tmpbuffer);
-                memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+                memFree(tmpbuffer, STDBUFFERLENGTH);
 
                 return 1;
               }
           }
 
         if (buffer)
-          { memFree(__FILE__, __LINE__, buffer, size); }
+          { memFree(buffer, size); }
 
         /* we update our document version */
         if (!error)
@@ -405,12 +404,12 @@ int xmlDataFileRead(char* filename, char** errormsg,
 
             if (validate != 1)
               {
-                tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+                tmpbuffer = memAlloc(STDBUFFERLENGTH);
                 snprintf(tmpbuffer, STDBUFFERLENGTH,
                     _("failed to validate xml document '%s'."),
                     filename);
                 showerror_cb(_("file error"), tmpbuffer);
-                memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+                memFree(tmpbuffer, STDBUFFERLENGTH);
 
                 return 1;
               }
@@ -467,15 +466,15 @@ int xmlDataFileWrite(char* filename, char** errormsg,
         error = zlibCompress(buffer, size, &gpgbuffer, &gpgsize, errormsg);
         if (error)
           {
-            tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+            tmpbuffer = memAlloc(STDBUFFERLENGTH);
             snprintf(tmpbuffer, STDBUFFERLENGTH,
                 _("error (%s) compressing file '%s'."),
                 *errormsg,
                 filename);
             showerror_cb(_("compression error"), tmpbuffer);
-            memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+            memFree(tmpbuffer, STDBUFFERLENGTH);
 
-            memFree(__FILE__, __LINE__, buffer, size);
+            memFree(buffer, size);
             return 1;
           }
 
@@ -485,7 +484,7 @@ int xmlDataFileWrite(char* filename, char** errormsg,
       }
     else if (buffer && !error && !config -> encryptdata)
       {   /* we don't have to encrypt data, so nothing is compressed */
-        gpgbuffer = memAlloc(__FILE__, __LINE__, size);
+        gpgbuffer = memAlloc(size);
         /* Flawfinder: ignore */
         memcpy(gpgbuffer, buffer, size);
 
@@ -501,7 +500,7 @@ int xmlDataFileWrite(char* filename, char** errormsg,
         if (error)
           { *errormsg = _("could not encrypt database file."); }
 
-        memFree(__FILE__, __LINE__, buffer, size);
+        memFree(buffer, size);
         buffer = gpgbuffer;
         size = gpgsize;
       }
@@ -520,28 +519,28 @@ int xmlDataFileWrite(char* filename, char** errormsg,
         if (fd == -1)
           {   /* error opening the file */
             showerror_cb(_("file error"), tmpbuffer);
-            memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+            memFree(tmpbuffer, STDBUFFERLENGTH);
 
             *errormsg = strerror(errno);
 
-            memFree(__FILE__, __LINE__, buffer, size);
+            memFree(buffer, size);
             return 1;
           }
 
         if (write(fd, buffer, size) != size)
           {   /* error writing the file */
-            tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+            tmpbuffer = memAlloc(STDBUFFERLENGTH);
             snprintf(tmpbuffer, STDBUFFERLENGTH,
                 _("error %d (%s) writing file '%s'."),
                 errno,
                 strerror(errno),
                 filename);
             showerror_cb(_("file error"), tmpbuffer);
-            memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+            memFree(tmpbuffer, STDBUFFERLENGTH);
 
             *errormsg = strerror(errno);
 
-            memFree(__FILE__, __LINE__, buffer, size);
+            memFree(buffer, size);
             return 1;
           }
 
@@ -550,7 +549,7 @@ int xmlDataFileWrite(char* filename, char** errormsg,
       }
 
     if (buffer && size)
-      { memFree(__FILE__, __LINE__, buffer, size); }
+      { memFree(buffer, size); }
 
     return error;
   }
@@ -645,7 +644,7 @@ void xmlValidateError(void* context, const char* msg, ...)
 
     TRACE(99, "xmlValidateError()", NULL);
 
-    tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+    tmpbuffer = memAlloc(STDBUFFERLENGTH);
 
     va_start(list, msg);
     /* Flawfinder: ignore */
@@ -659,7 +658,7 @@ void xmlValidateError(void* context, const char* msg, ...)
 
     validateShowError(_("validation error"), tmpbuffer);
 
-    memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+    memFree(tmpbuffer, STDBUFFERLENGTH);
   }
 
 
@@ -681,7 +680,7 @@ void xmlValidateWarning(void* context, const char* msg, ...)
 
     TRACE(99, "xmlValidateWarning()", NULL);
 
-    tmpbuffer = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+    tmpbuffer = memAlloc(STDBUFFERLENGTH);
 
     va_start(list, msg);
     /* Flawfinder: ignore */
@@ -695,7 +694,7 @@ void xmlValidateWarning(void* context, const char* msg, ...)
 
     validateShowError(_("validation warning"), tmpbuffer);
 
-    memFree(__FILE__, __LINE__, tmpbuffer, STDBUFFERLENGTH);
+    memFree(tmpbuffer, STDBUFFERLENGTH);
   }
 
 
@@ -777,7 +776,7 @@ void xmlVersionUpdate(int silent)
     else
       {   /* we have version information but its not up to date */
         size = strlen((char*)prop) + 1;
-        old = memAlloc(__FILE__, __LINE__, size);
+        old = memAlloc(size);
         strStrncpy(old, (char*)prop, size);
 
         ptr = old;
@@ -794,7 +793,7 @@ void xmlVersionUpdate(int silent)
         xmlVersionNodeUpdate(version, rootnode);
 
 
-        memFree(__FILE__, __LINE__, old, size);
+        memFree(old, size);
       }
 
     /* we update the modified timestamp */

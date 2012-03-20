@@ -263,7 +263,7 @@ char* editorFindById(int uid)
                 if (uid == atoi(prop))
                   {
                     user = convert2terminal(xmlNodeGetContent(curnode));
-                    result = memAlloc(__FILE__, __LINE__, strlen(user) + 1);
+                    result = memAlloc(strlen(user) + 1);
                     strStrncpy(result, user, strlen(user) + 1);
 
                     return result;
@@ -344,7 +344,7 @@ void freeXMLInterface(void)
 
     if (xmlwalklist)
       {
-        memFree(__FILE__, __LINE__, xmlwalklist, maxlevel * sizeof(xmlNode*));
+        memFree(xmlwalklist, maxlevel * sizeof(xmlNode*));
         xmlwalklist = NULL;
       }
   }
@@ -564,7 +564,7 @@ char* xmlInterfaceGetComment(char* label)
       { return NULL; }
 
     comment = convert2terminal(xmlNodeGetContent(commentnode));
-    result = memAlloc(__FILE__, __LINE__, strlen(comment) + 1);
+    result = memAlloc(strlen(comment) + 1);
     strStrncpy(result, comment, strlen(comment) + 1);
 
     return result;
@@ -605,7 +605,7 @@ void xmlInterfaceGetCreationLabel(char* label, char** by, char**on)
     propon = convert2terminal(xmlGetProp(node, BAD_CAST "created-on"));
     if (!propon)
       { propon = "---"; }
-    *on = memAlloc(__FILE__, __LINE__, strlen(propon) + 1);
+    *on = memAlloc(strlen(propon) + 1);
     strStrncpy(*on, propon, strlen(propon) + 1);
   }
 
@@ -644,7 +644,7 @@ void xmlInterfaceGetModificationLabel(char* label, char** by, char**on)
     propon = convert2terminal(xmlGetProp(node, BAD_CAST "modified-on"));
     if (!propon)
       { propon = "---"; }
-    *on = memAlloc(__FILE__, __LINE__, strlen(propon) + 1);
+    *on = memAlloc(strlen(propon) + 1);
     strStrncpy(*on, propon, strlen(propon) + 1);
   }
 
@@ -683,7 +683,7 @@ char** xmlInterfaceGetNames(void)
       { return NULL; }
 
     /* then we allocate the memory */
-    list = memAlloc(__FILE__, __LINE__, (counter + 1) * sizeof(char*));
+    list = memAlloc((counter + 1) * sizeof(char*));
 
     /* and finally we fill the array */
     curnode = xmlwalklist[level - 1] -> children;
@@ -696,7 +696,7 @@ char** xmlInterfaceGetNames(void)
             if (prop)
               {
                 pconv = convert2terminal(prop);
-                list[i] = memAlloc(__FILE__, __LINE__, strlen(pconv) + 1);
+                list[i] = memAlloc(strlen(pconv) + 1);
                 strStrncpy(list[i], pconv, strlen(pconv) + 1);
 
                 i++;
@@ -742,7 +742,7 @@ int xmlInterfaceNodeDown(char* label)
 
     if (++level > maxlevel)
       {   /* reallocate as many pointers as needed at the moment */
-        xmlwalklist = memRealloc(__FILE__, __LINE__, xmlwalklist,
+        xmlwalklist = memRealloc(xmlwalklist,
             maxlevel * sizeof(xmlNode*),
             level * sizeof(xmlNode*));
 

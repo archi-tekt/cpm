@@ -47,7 +47,7 @@ char* strNewcat(char* str1, char* str2)
       { size = strlen(str1) + strlen(str2) + 1; }
     else
       { size = strlen(str1) + 1; }
-    buffer = memAlloc(__FILE__, __LINE__, size);
+    buffer = memAlloc(size);
     /* Flawfinder: ignore */
     strcpy(buffer, str1);
     if (str2)

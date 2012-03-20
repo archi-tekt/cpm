@@ -81,7 +81,7 @@ void getDefaultOptions(void)
           {   /* we don't have the user's rc file in ~/.cpmrc, so we try to
                * find it in the default RC path (/etc/cpmrc)
                */
-            memFreeString(__FILE__, __LINE__, config -> rcfile);
+            memFreeString(config -> rcfile);
             config -> rcfile = getFilePath(DEFAULT_RC_PATH_1,
                 DEFAULT_ETC_RC_FILE);
           }
@@ -91,7 +91,7 @@ void getDefaultOptions(void)
           {   /* we didn't find it in /etc/cpmrc either, so we try
                * /etc/cpm/cpmrc
                */
-            memFreeString(__FILE__, __LINE__, config -> rcfile);
+            memFreeString(config -> rcfile);
             config -> rcfile = getFilePath(DEFAULT_RC_PATH_2,
                 DEFAULT_ETC_RC_FILE);
           }
@@ -99,14 +99,13 @@ void getDefaultOptions(void)
           { found = 1; }
         if (!found && !fileExists(config -> rcfile))
           {   /* if the file still does not exist, we empty the configuration */
-            memFreeString(__FILE__, __LINE__, config -> rcfile);
+            memFreeString(config -> rcfile);
             config -> rcfile = NULL;
           }
       }
     if (!config -> encoding)
       {
-        config -> encoding = memAlloc(__FILE__, __LINE__,
-            strlen(DEFAULT_ENCODING) + 1);
+        config -> encoding = memAlloc(strlen(DEFAULT_ENCODING) + 1);
         strStrncpy(config -> encoding, DEFAULT_ENCODING,
             strlen(DEFAULT_ENCODING) + 1);
       }
@@ -131,15 +130,14 @@ char* getFilePath(char* path, char* filename)
 
     if (path)
       {   /* we got a path and a filename */
-        result = memAlloc(__FILE__, __LINE__,
-            strlen(path) + 1 + strlen(filename) + 1);
+        result = memAlloc(strlen(path) + 1 + strlen(filename) + 1);
         strStrncpy(result, path, strlen(path) + 1);
         strStrncat(result, "/",  1 + 1);
         strStrncat(result, filename, strlen(filename) + 1);
       }
     else
       {   /* we just got a filename */
-        result = memAlloc(__FILE__, __LINE__, strlen(filename) + 1);
+        result = memAlloc(strlen(filename) + 1);
         strStrncpy(result, filename, strlen(filename) + 1);
       }
 
@@ -275,8 +273,7 @@ int getOptions(int argc, char **argv)
                           }
                         else
                           {
-                            config -> testrun = memAlloc(__FILE__, __LINE__,
-                                strlen(optarg) + 1);
+                            config -> testrun = memAlloc(strlen(optarg) + 1);
                             strStrncpy(config -> testrun, optarg,
                                 strlen(optarg) + 1);
                           }
@@ -313,8 +310,7 @@ int getOptions(int argc, char **argv)
                   }
                 else
                   {
-                    config -> rcfile = memAlloc(__FILE__, __LINE__,
-                        strlen(optarg) + 1);
+                    config -> rcfile = memAlloc(strlen(optarg) + 1);
                     strStrncpy(config -> rcfile, optarg, strlen(optarg) + 1);
                   }
                 break;
@@ -355,8 +351,7 @@ int getOptions(int argc, char **argv)
                   }
                 else
                   {
-                    config -> encoding = memAlloc(__FILE__, __LINE__,
-                        strlen(optarg) + 1);
+                    config -> encoding = memAlloc(strlen(optarg) + 1);
                     strStrncpy(config -> encoding, optarg, strlen(optarg) + 1);
                   }
                 break;
@@ -375,8 +370,7 @@ int getOptions(int argc, char **argv)
                   }
                 else
                   {
-                    config -> dbfilecmd = memAlloc(__FILE__, __LINE__,
-                        strlen(optarg) + 1);
+                    config -> dbfilecmd = memAlloc(strlen(optarg) + 1);
                     strStrncpy(config -> dbfilecmd, optarg, strlen(optarg) + 1);
                   }
                 break;

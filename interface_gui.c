@@ -456,15 +456,15 @@ char* getListtitle(int level)
 
     TRACE(99, "getListtitle()", NULL);
 
-    title = memAlloc(__FILE__, __LINE__, 7 + 1);
+    title = memAlloc(7 + 1);
     strStrncpy(title, "</B/24>", 7 + 1);
-    subtitle = memAlloc(__FILE__, __LINE__, 7 + 1);
+    subtitle = memAlloc(7 + 1);
     strStrncpy(subtitle, "</B/24>", 7 + 1);
 
     for (i = 1; i <= level - 1; i++)
       {   /* we collect the template tree */
         templatename = xmlInterfaceTemplateGet(i, &is_static);
-        title = memRealloc(__FILE__, __LINE__, title,
+        title = memRealloc(title,
             strlen(title) + 1,
             strlen(title) + strlen(templatename) + 1 + 1);
 
@@ -496,7 +496,7 @@ char* getListtitle(int level)
         else
           { templatename = xmlInterfaceNodeGet(i); }
 
-        subtitle = memRealloc(__FILE__, __LINE__, subtitle,
+        subtitle = memRealloc(subtitle,
             strlen(subtitle) + 1,
             strlen(subtitle) + strlen(templatename) + 1 + 1);
 
@@ -507,13 +507,13 @@ char* getListtitle(int level)
 
         strStrncat(subtitle, templatename, strlen(templatename) + 1);
       }
-    title = memRealloc(__FILE__, __LINE__, title,
+    title = memRealloc(title,
         strlen(title) + 1,
         strlen(title) + strlen(subtitle) + 1 + 1);
     strStrncat(title, "\n", 1 + 1);
     strStrncat(title, subtitle, strlen(subtitle) + 1);
 
-    memFreeString(__FILE__, __LINE__, subtitle);
+    memFreeString(subtitle);
 
     return title;
   }
@@ -634,7 +634,7 @@ const char* guiDialogPassphrase(int retry, char* realm)
     /* we make the realm terminal usable */
     trealm = convert2terminal((xmlChar*)realm);
 
-    title = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+    title = memAlloc(STDBUFFERLENGTH);
     snprintf(title, STDBUFFERLENGTH,
         _("</B>enter your passphrase (try #%d)<!B>\n%s"),
         retry, trealm);
@@ -649,7 +649,7 @@ const char* guiDialogPassphrase(int retry, char* realm)
       { destroyScreen(__LINE__, _("can not create dialog.")); }
 
     if (title)
-        memFree(__FILE__, __LINE__, title, STDBUFFERLENGTH);
+        memFree(title, STDBUFFERLENGTH);
 
     /* set the data of the input field */
     setCDKEntry(entry, "", 0, PASSPHRASE_LENGTH, SHOW_BOX);
@@ -773,7 +773,7 @@ int guiDialogAddNode(EObjectType cdktype, void* object, void* clientdata,
         return 1;
       }
 
-    title = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+    title = memAlloc(STDBUFFERLENGTH);
     snprintf(title, STDBUFFERLENGTH,
         _("</B>add new %s<!B>"),
         xmlInterfaceTemplateGet(event -> level, &is_static));
@@ -793,7 +793,7 @@ int guiDialogAddNode(EObjectType cdktype, void* object, void* clientdata,
     if (!entry)
       { destroyScreen(__LINE__, _("can not create dialog.")); }
 
-    memFree(__FILE__, __LINE__, title, STDBUFFERLENGTH);
+    memFree(title, STDBUFFERLENGTH);
 
     /* set the data of the input field */
     setCDKEntry(entry, NULL, 0, STDSTRINGLENGTH, SHOW_BOX);
@@ -876,7 +876,7 @@ int guiDialogDeleteEncryptionKey(EObjectType cdktype, void* object,
     /* we ask if this key should be deleted */
     length = strlen(keyGet(counter)) + 9 + 1;
     msgDeleteNode[0] = _("Are you sure you want to delete the encryption key");
-    msgDeleteNode[1] = memAlloc(__FILE__, __LINE__, length);
+    msgDeleteNode[1] = memAlloc(length);
     snprintf(msgDeleteNode[1], length, "%s?", keyGet(counter));
 
     if (guiDialogYesNo(event -> level, msgDeleteNode) == 1)
@@ -885,7 +885,7 @@ int guiDialogDeleteEncryptionKey(EObjectType cdktype, void* object,
         runtime -> datachanged = 1;
       }
 
-    memFree(__FILE__, __LINE__, msgDeleteNode[1], length);
+    memFree(msgDeleteNode[1], length);
 
 #ifdef CDK_VERSION_5
     /* tell the widget that it has to exit  */
@@ -937,7 +937,7 @@ int guiDialogDeleteNode(EObjectType cdktype, void* object, void* clientdata,
 
     length = strlen(label) + 15 + 1;
     msgDeleteNode[0] = _("Are you sure you want to delete");
-    msgDeleteNode[1] = memAlloc(__FILE__, __LINE__, length);
+    msgDeleteNode[1] = memAlloc(length);
     snprintf(msgDeleteNode[1], length, _("entry %s?"), label);
 
     if (guiDialogYesNo(event -> level, msgDeleteNode) == 1)
@@ -949,7 +949,7 @@ int guiDialogDeleteNode(EObjectType cdktype, void* object, void* clientdata,
         freshAlphalist(event -> widget);
       }
 
-    memFree(__FILE__, __LINE__, msgDeleteNode[1], length);
+    memFree(msgDeleteNode[1], length);
 
     return 1;
   }
@@ -1030,7 +1030,7 @@ int guiDialogEditComment(EObjectType cdktype, void* object, void* clientdata,
     destroyCDKMentry(mentry);
 
     /* free our old comment */
-    memFreeString(__FILE__, __LINE__, comment);
+    memFreeString(comment);
 
     /* redraw the statusline */
     if (statusline)
@@ -1161,7 +1161,7 @@ int guiDialogEditNode(EObjectType cdktype, void* object, void* clientdata,
         return 1;
       }
 
-    title = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+    title = memAlloc(STDBUFFERLENGTH);
     snprintf(title, STDBUFFERLENGTH, _("</B>edit %s<!B>"),
         xmlInterfaceTemplateGet(event -> level, &is_static));
 
@@ -1180,7 +1180,7 @@ int guiDialogEditNode(EObjectType cdktype, void* object, void* clientdata,
     if (!entry)
       { destroyScreen(__LINE__, _("can not create dialog.")); }
 
-    memFree(__FILE__, __LINE__, title, STDBUFFERLENGTH);
+    memFree(title, STDBUFFERLENGTH);
 
     if (key == '')
       {   /* we have to create a new password */
@@ -1244,7 +1244,7 @@ int guiDialogEditNode(EObjectType cdktype, void* object, void* clientdata,
       }
 
     if (password)
-      { memFreeString(__FILE__, __LINE__, password); }
+      { memFreeString(password); }
 
     destroyCDKEntry(entry);
 
@@ -1426,9 +1426,9 @@ void guiDialogOk(int level, char** message)
         ptr = message[i];
         while (strlen(ptr) > 72)
           {
-            display = memRealloc(__FILE__, __LINE__, display,
+            display = memRealloc(display,
                 sizeof(char*) * nlines, sizeof(char*) * (nlines + 1));
-            display[nlines] = memAlloc(__FILE__, __LINE__, 72 + 1);
+            display[nlines] = memAlloc(72 + 1);
             strStrncpy(display[nlines], ptr, 72 + 1);
             ptr += 72;
             nlines++;
@@ -1436,16 +1436,16 @@ void guiDialogOk(int level, char** message)
 
         if (strlen(ptr) || !strlen(message[i]))
           {
-            display = memRealloc(__FILE__, __LINE__, display,
+            display = memRealloc(display,
                 sizeof(char*) * nlines, sizeof(char*) * (nlines + 1));
-            display[nlines] = memAlloc(__FILE__, __LINE__, strlen(ptr) + 1);
+            display[nlines] = memAlloc(strlen(ptr) + 1);
             strStrncpy(display[nlines], ptr, strlen(ptr) + 1);
           }
 
         nlines++;
       }
 
-    display = memRealloc(__FILE__, __LINE__, display,
+    display = memRealloc(display,
         sizeof(char*) * nlines, sizeof(char*) * (nlines + 1));
     display[nlines] = NULL;
 
@@ -1477,8 +1477,8 @@ void guiDialogOk(int level, char** message)
     while (!done);
 
     for (i = 0; i < nlines; i++)
-      { memFreeString(__FILE__, __LINE__, display[i]); }
-    memFree(__FILE__, __LINE__, display, sizeof(char*) * (nlines + 1));
+      { memFreeString(display[i]); }
+    memFree(display, sizeof(char*) * (nlines + 1));
 
     /* redraw the statusline */
     if (statusline)
@@ -1500,11 +1500,11 @@ void guiDialogShowError(const char* headline, const char* message)
 
     TRACE(99, "guiDialogShowError()", NULL);
 
-    msgError[0] = memAlloc(__FILE__, __LINE__, strlen(headline) + 8 + 1);
+    msgError[0] = memAlloc(strlen(headline) + 8 + 1);
     snprintf(msgError[0], strlen(headline) + 8 + 1, "</B>%s<!B>", headline);
     msgError[1] = (char*)message;
     guiDialogOk(0, msgError);
-    memFreeString(__FILE__, __LINE__, msgError[0]);
+    memFreeString(msgError[0]);
   }
 
 
@@ -1773,12 +1773,12 @@ void guiMessageClear(char** message)
     /* free all strings */
     while (message[lines])
       {
-        memFreeString(__FILE__, __LINE__, message[lines]);
+        memFreeString(message[lines]);
         lines++;
       }
 
     /* free the array of strings */
-    memFree(__FILE__, __LINE__, message, sizeof(char*) * (lines + 1));
+    memFree(message, sizeof(char*) * (lines + 1));
   }
 
 
@@ -1807,7 +1807,7 @@ char** guiMessageFormat(char** message)
     while (message[lines])
       { lines++; }
 
-    nmessage = memAlloc(__FILE__, __LINE__, sizeof(char*) * (lines + 1));
+    nmessage = memAlloc(sizeof(char*) * (lines + 1));
     nmessage[lines] = NULL;
 
     columns = getInfodataLength();
@@ -1818,7 +1818,7 @@ char** guiMessageFormat(char** message)
         int             size;
 
         size = min(columns - WIDTHDELTA + 1, strlen(message[i]) + 1);
-        nmessage[i] = memAlloc(__FILE__, __LINE__, size);
+        nmessage[i] = memAlloc(size);
         strStrncpy(nmessage[i], message[i], size);
       }
 
@@ -1928,11 +1928,11 @@ void guiUpdateInfo(CDKLABEL* infobox, char** infodata, int id)
 
         commentFormat(infodata, comment);
 
-        memFreeString(__FILE__, __LINE__, modified_by);
-        memFreeString(__FILE__, __LINE__, modified_on);
-        memFreeString(__FILE__, __LINE__, created_by);
-        memFreeString(__FILE__, __LINE__, created_on);
-        memFreeString(__FILE__, __LINE__, comment);
+        memFreeString(modified_by);
+        memFreeString(modified_on);
+        memFreeString(created_by);
+        memFreeString(created_on);
+        memFreeString(comment);
 
         xmlInterfaceFreeNames(nodenames);
       }
@@ -1969,11 +1969,10 @@ void interfaceLoop(void)
 
     TRACE(99, "interfaceLoop()", NULL);
 
-    infodata = memAlloc(__FILE__, __LINE__,
-        sizeof(char*) * (config -> infoheight + 1));
+    infodata = memAlloc(sizeof(char*) * (config -> infoheight + 1));
     for (id = 0; id < config -> infoheight; id++)
       {
-        infodata[id] = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+        infodata[id] = memAlloc(STDBUFFERLENGTH);
         snprintf(infodata[id], STDBUFFERLENGTH, "%*s",
             getInfodataLength(), "");
       }
@@ -1999,12 +1998,11 @@ void interfaceLoop(void)
       {
         if (maxlevel < level)
           {   /* reallocate as many pointers as needed at the moment */
-            listwidget = memRealloc(__FILE__, __LINE__,
-                listwidget,
+            listwidget = memRealloc(listwidget,
                 maxlevel * sizeof(CDKALPHALIST*),
                 level * sizeof(CDKALPHALIST*));
             listwidget[level - 1] = NULL;
-            keyevent = memRealloc(__FILE__, __LINE__, keyevent,
+            keyevent = memRealloc(keyevent,
                 maxlevel * sizeof(KEYEVENT*),
                 level * sizeof(KEYEVENT*));
             keyevent[level - 1] = NULL;
@@ -2016,8 +2014,7 @@ void interfaceLoop(void)
         if (!listwidget[id])
           {
             title = xmlInterfaceTemplateGet(level, &is_static);
-            quicksearch = memAlloc(__FILE__, __LINE__,
-                strlen(title) + 11 + 1);
+            quicksearch = memAlloc(strlen(title) + 11 + 1);
             snprintf(quicksearch, strlen(title) + 11 + 1,
                 " </B>%s<!B>: ", title);
             title = getListtitle(level);
@@ -2042,8 +2039,8 @@ void interfaceLoop(void)
               { destroyScreen(__LINE__, _("can not create alpha list.")); }
 
             xmlInterfaceFreeNames(nodenames);
-            memFreeString(__FILE__, __LINE__, quicksearch);
-            memFreeString(__FILE__, __LINE__, title);
+            memFreeString(quicksearch);
+            memFreeString(title);
           }
         else
           { drawCDKAlphalist(listwidget[id], FALSE); }
@@ -2051,8 +2048,7 @@ void interfaceLoop(void)
         /* we store our widget handler */
         if (!keyevent[id])
           {
-            keyevent[id] = memAlloc(__FILE__, __LINE__,
-                sizeof(KEYEVENT));
+            keyevent[id] = memAlloc(sizeof(KEYEVENT));
             keyevent[id] -> infobox = infobox;
             keyevent[id] -> infodata = infodata;
             keyevent[id] -> preprocessfunction = NULL;
@@ -2121,7 +2117,7 @@ void interfaceLoop(void)
             /* destroy the alpha list */
             destroyCDKAlphalist(listwidget[id]);
             listwidget[id] = NULL;
-            memFree(__FILE__, __LINE__, keyevent[id], sizeof(KEYEVENT));
+            memFree(keyevent[id], sizeof(KEYEVENT));
             keyevent[id] = NULL;
             xmlInterfaceNodeUp();
           }
@@ -2158,20 +2154,18 @@ void interfaceLoop(void)
 
     /* we free our infobox data */
     for (id = 0; id < config -> infoheight; id++)
-      { memFree(__FILE__, __LINE__, infodata[id], STDBUFFERLENGTH); }
-    memFree(__FILE__, __LINE__,
-        infodata, sizeof(char*) * (config -> infoheight + 1));
+      { memFree(infodata[id], STDBUFFERLENGTH); }
+    memFree(infodata, sizeof(char*) * (config -> infoheight + 1));
 
     /* free the infobox */
     destroyCDKLabel(infobox);
 
     /* free the widget memory */
     if (keyevent)
-      { memFree(__FILE__, __LINE__, keyevent, maxlevel * sizeof(KEYEVENT*)); }
+      { memFree(keyevent, maxlevel * sizeof(KEYEVENT*)); }
     if (listwidget)
       {
-        memFree(__FILE__, __LINE__,
-            listwidget, maxlevel * sizeof(CDKALPHALIST*));
+        memFree(listwidget, maxlevel * sizeof(CDKALPHALIST*));
       }
   }
 
@@ -2319,7 +2313,7 @@ void userInterface(void)
                       {   /* in case there was an error message from
                            * fileLockOpen(), the string must be freed
                            */
-                        memFree(__FILE__, __LINE__, errormsg, STDBUFFERLENGTH);
+                        memFree(errormsg, STDBUFFERLENGTH);
                       }
 
                     runtime -> readonly = 1;
@@ -2378,8 +2372,7 @@ void userInterface(void)
                * saved.
                */
             savemessages = keyCount() + 4;
-            msgSaveData = memAlloc(__FILE__, __LINE__,
-                sizeof(char*) * savemessages);
+            msgSaveData = memAlloc(sizeof(char*) * savemessages);
             for (i = 0; i < savemessages; i++)
               { msgSaveData[i] = NULL; }
 
@@ -2402,7 +2395,7 @@ void userInterface(void)
                     break;
               }
 
-            memFree(__FILE__, __LINE__, msgSaveData,
+            memFree(msgSaveData,
                 sizeof(char*) * savemessages);
           }
 

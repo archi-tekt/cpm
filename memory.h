@@ -27,22 +27,22 @@
  * prototypes
  */
 #ifdef MEMDEBUG
-  #define memAlloc(file, line, size) \
-      memDebugAlloc(file, line, size)
-  #define memFree(file, line, ptr, size) \
-      memDebugFree(file, line, ptr, size)
-  #define memFreeString(file, line, ptr) \
-      memDebugFreeString(file, line, ptr)
-  #define memRealloc(file, line, ptr, size_old, size_new) \
-      memDebugRealloc(file, line, ptr, size_old, size_new)
+  #define memAlloc(size) \
+      memDebugAlloc(__FILE__, __LINE__, size)
+  #define memFree(ptr, size) \
+      memDebugFree(__FILE__, __LINE__, ptr, size)
+  #define memFreeString(ptr) \
+      memDebugFreeString(__FILE__, __LINE__, ptr)
+  #define memRealloc(ptr, size_old, size_new) \
+      memDebugRealloc(__FILE__, __LINE__, ptr, size_old, size_new)
 #else
-  #define memAlloc(file, line, size) \
+  #define memAlloc(size) \
       memRealAlloc(size);
-  #define memFree(file, line, ptr, size) \
+  #define memFree(ptr, size) \
       memRealFree(ptr, size);
-  #define memFreeString(file, line, ptr) \
+  #define memFreeString(ptr) \
       memRealFreeString(ptr);
-  #define memRealloc(file, line, ptr, size_old, size_new) \
+  #define memRealloc(ptr, size_old, size_new) \
       memRealRealloc(ptr, size_old, size_new);
 #endif
 

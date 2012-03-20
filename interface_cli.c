@@ -223,13 +223,13 @@ int cliInterface(void)
       }
 
     if (clisearchpattern)
-      { memFreeString(__FILE__, __LINE__, clisearchpattern); }
+      { memFreeString(clisearchpattern); }
 
     /* we build the searchpattern string, the user searches for */
     i = size = 0;
     while (config -> searchdata[i])
       { size += strlen(config -> searchdata[i++]) + 1; }
-    clisearchpattern = memAlloc(__FILE__, __LINE__, size);
+    clisearchpattern = memAlloc(size);
     clisearchpattern[0] = 0;
     i = 0;
     while (config -> searchdata[i])
@@ -254,10 +254,10 @@ int cliInterface(void)
     if (prepareSearchexpression())
       {
         /* we cycle through the list and try to find all matches */
-        path = memAlloc(__FILE__, __LINE__, sizeof(char**));
+        path = memAlloc(sizeof(char**));
         *path = NULL;
         found = xmlInterfaceTreeWalk(NULL, path, cliTreeWalk);
-        memFree(__FILE__, __LINE__, path, sizeof(char**));
+        memFree(path, sizeof(char**));
 
         if (runtime -> searchtype == SEARCH_REGEX)
           { regfree(&searchregex); }
@@ -269,7 +269,7 @@ int cliInterface(void)
 
 
     if (clisearchpattern)
-      { memFreeString(__FILE__, __LINE__, clisearchpattern); }
+      { memFreeString(clisearchpattern); }
 
     if (!error)
       {
@@ -384,11 +384,11 @@ int cliTreeWalk(char** path)
                       }
                   }
                 if (cresult)
-                  { memFreeString(__FILE__, __LINE__, cresult); }
+                  { memFreeString(cresult); }
               }
           }
         if (cstring)
-          { memFreeString(__FILE__, __LINE__, cstring); }
+          { memFreeString(cstring); }
 
         i++;
       }
@@ -426,10 +426,10 @@ int prepareSearchexpression(void)
     result = regcomp(&searchregex, clisearchpattern, eflags);
     if (result)
       {
-        errormsg = memAlloc(__FILE__, __LINE__, STDBUFFERLENGTH);
+        errormsg = memAlloc(STDBUFFERLENGTH);
         regerror(result, &searchregex, errormsg, STDBUFFERLENGTH);
         fprintf(stderr, "regular expression error: %s\n", errormsg);
-        memFree(__FILE__, __LINE__, errormsg, STDBUFFERLENGTH);
+        memFree(errormsg, STDBUFFERLENGTH);
       }
 
     return !result;

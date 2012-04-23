@@ -294,7 +294,7 @@ void commentFormat(char** infodata, char* comment)
  *                                  and we want to exit immediately
  * Return         1 for error, 0 if all is well
  */
-void destroyScreen(int line, char* message)
+void destroyScreen_(int line, char* message)
   {
     TRACE(99, "destroyScreen()", NULL);
 
@@ -646,7 +646,7 @@ const char* guiDialogPassphrase(int retry, char* realm)
         vHMIXED, 60, 0, PASSPHRASE_LENGTH,
         SHOW_BOX, SHOW_SHADOW);
     if (!entry)
-      { destroyScreen(__LINE__, _("can not create dialog.")); }
+      { destroyScreen(_("can not create dialog.")); }
 
     if (title)
         memFree(title, STDBUFFERLENGTH);
@@ -703,7 +703,7 @@ int guiDialogAddEncryptionKey(EObjectType cdktype, void* object,
         vMIXED, 60, 0, STDSTRINGLENGTH,
         SHOW_BOX, SHOW_SHADOW);
     if (!entry)
-      { destroyScreen(__LINE__, _("can not create dialog.")); }
+      { destroyScreen(_("can not create dialog.")); }
 
     /* set the data of the input field */
     setCDKEntry(entry, event -> selection, 0, STDSTRINGLENGTH, SHOW_BOX);
@@ -791,7 +791,7 @@ int guiDialogAddNode(EObjectType cdktype, void* object, void* clientdata,
         vMIXED, 60, 0, STDSTRINGLENGTH,
         SHOW_BOX, SHOW_SHADOW);
     if (!entry)
-      { destroyScreen(__LINE__, _("can not create dialog.")); }
+      { destroyScreen(_("can not create dialog.")); }
 
     memFree(title, STDBUFFERLENGTH);
 
@@ -1003,7 +1003,7 @@ int guiDialogEditComment(EObjectType cdktype, void* object, void* clientdata,
         vMIXED, 60, 20, 20, 0,
         SHOW_BOX, SHOW_SHADOW);
     if (!mentry)
-      { destroyScreen(__LINE__, _("can not create dialog.")); }
+      { destroyScreen(_("can not create dialog.")); }
 
     setCDKMentry(mentry, comment, -1, SHOW_BOX);
     activateCDKMentry(mentry, (chtype*)NULL);
@@ -1082,7 +1082,7 @@ int guiDialogEditEncryptionKey(EObjectType cdktype, void* object,
         vMIXED, 60, 0, STDSTRINGLENGTH,
         SHOW_BOX, SHOW_SHADOW);
     if (!entry)
-      { destroyScreen(__LINE__, _("can not create dialog.")); }
+      { destroyScreen(_("can not create dialog.")); }
 
     /* set the data of the input field */
     setCDKEntry(entry, keyGet(counter), 0, STDSTRINGLENGTH, SHOW_BOX);
@@ -1178,7 +1178,7 @@ int guiDialogEditNode(EObjectType cdktype, void* object, void* clientdata,
         vMIXED, 60, 0, STDSTRINGLENGTH,
         SHOW_BOX, SHOW_SHADOW);
     if (!entry)
-      { destroyScreen(__LINE__, _("can not create dialog.")); }
+      { destroyScreen(_("can not create dialog.")); }
 
     memFree(title, STDBUFFERLENGTH);
 
@@ -1191,7 +1191,7 @@ int guiDialogEditNode(EObjectType cdktype, void* object, void* clientdata,
         randombox = newCDKLabel(cdkscreen, CENTER, CENTER,
             msgRandom, 3, SHOW_BOX, SHOW_SHADOW);
         if (!randombox)
-          { destroyScreen(__LINE__, _("can not create randombox.")); }
+          { destroyScreen(_("can not create randombox.")); }
         refreshCDKScreen(cdkscreen);
 
         password = createPassword(config -> passwordlength);
@@ -1297,7 +1297,7 @@ int guiDialogHandleKeys(EObjectType cdktype, void* object, void* clientdata,
             keyGetList(), counter,
             NONUMBERS, A_REVERSE, SHOW_BOX, SHOW_SHADOW);
         if (!scroll)
-          { destroyScreen(__LINE__, _("can not create scroll list.")); }
+          { destroyScreen(_("can not create scroll list.")); }
 
         keyevent.infobox = NULL;
         keyevent.infodata = NULL;
@@ -1459,7 +1459,7 @@ void guiDialogOk(int level, char** message)
             TRUE, SHOW_BOX, SHOW_SHADOW);
         guiMessageClear(tmessage);
         if (!question)
-          { destroyScreen(__LINE__, _("can not create dialog.")); }
+          { destroyScreen(_("can not create dialog.")); }
 
         selection = activateCDKDialog(question, (chtype*)NULL);
 
@@ -1544,7 +1544,7 @@ int guiDialogTemplateName(EObjectType cdktype, void* object, void* clientdata,
         vMIXED, 60, 0, STDSTRINGLENGTH,
         SHOW_BOX, SHOW_SHADOW);
     if (!entry)
-      { destroyScreen(__LINE__, _("can not create dialog.")); }
+      { destroyScreen(_("can not create dialog.")); }
 
     /* set the data of the input field */
     setCDKEntry(entry, xmlInterfaceTemplateGet(-1, &is_static), 0,
@@ -1606,7 +1606,7 @@ int guiDialogYesNo(int level, char** message)
         TRUE, SHOW_BOX, SHOW_SHADOW);
     guiMessageClear(tmessage);
     if (!question)
-      { destroyScreen(__LINE__, _("can not create dialog.")); }
+      { destroyScreen(_("can not create dialog.")); }
 
     selection = activateCDKDialog(question, (chtype*)NULL);
 
@@ -1720,7 +1720,7 @@ int guiDialogYesNoCancel(int level, char** message)
         TRUE, SHOW_BOX, SHOW_SHADOW);
     guiMessageClear(tmessage);
     if (!question)
-      { destroyScreen(__LINE__, _("can not create dialog.")); }
+      { destroyScreen(_("can not create dialog.")); }
 
     selection = activateCDKDialog(question, (chtype*)NULL);
 
@@ -1986,7 +1986,7 @@ void interfaceLoop(void)
         infodata, config -> infoheight, SHOW_BOX, SHOW_SHADOW);
 #endif
     if (!infobox)
-      { destroyScreen(__LINE__, _("can not create infobox.")); }
+      { destroyScreen(_("can not create infobox.")); }
 
     drawCDKLabel(infobox, FALSE);
 
@@ -2036,7 +2036,7 @@ void interfaceLoop(void)
                 '_',
                 A_REVERSE, SHOW_BOX, SHOW_SHADOW);
             if (!listwidget[id])
-              { destroyScreen(__LINE__, _("can not create alpha list.")); }
+              { destroyScreen(_("can not create alpha list.")); }
 
             xmlInterfaceFreeNames(nodenames);
             memFreeString(quicksearch);
@@ -2270,12 +2270,11 @@ void userInterface(void)
     msgUpdate[0]        = _("The database was updated to the latest version.");
 
     if (initializeScreen())
-      { destroyScreen(__LINE__, _("can not initialize the screen.")); }
+      { destroyScreen(_("can not initialize the screen.")); }
 
     if (!initUTF8Encoding(config -> encoding))
       {
-        destroyScreen(__LINE__,
-            _("failed to initialize the character encoding."));
+        destroyScreen(_("failed to initialize the character encoding."));
       }
 
     if (xmlDataFileRead(runtime -> dbfile, &errormsg, guiDialogPassphrase,
@@ -2283,7 +2282,7 @@ void userInterface(void)
       {
         if (!errormsg)
           { errormsg = _("file read error."); }
-        destroyScreen(__LINE__, errormsg);
+        destroyScreen(errormsg);
       }
 
     if (runtime -> readonly)
@@ -2421,7 +2420,7 @@ void userInterface(void)
         guiDialogOk(0, msgNoUnlock);
       }
 
-    destroyScreen(__LINE__, NULL);
+    destroyScreen(NULL);
   }
 
 

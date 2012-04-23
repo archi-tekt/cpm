@@ -33,7 +33,8 @@
 /* #############################################################################
  * prototypes
  */
-void destroyScreen(int line, char* message);
+#define destroyScreen(message) destroyScreen_(__LINE__, message)
+void destroyScreen_(int line, char* message);
 void userInterface(void);
 
 
